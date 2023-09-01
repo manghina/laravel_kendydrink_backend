@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('stripe_id')->nullable();
-            $table->string('card_id')->nullable();
+            $table->decimal('percentage')->default(0);
         });
     }
 
