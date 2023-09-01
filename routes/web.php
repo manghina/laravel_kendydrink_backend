@@ -26,7 +26,10 @@ Route::get('/product/best', [ProductController::class, 'best']);
 Route::get('/product/{id}', [ProductController::class, 'findById']);
 Route::get('/product/{id}/img/{resolution}', [ProductController::class, 'findImgById']);
 Route::get('/product/{id}/img', [ProductController::class, 'findImgById']);
+
+Route::post('/orders/create', [OrderController::class, 'test']);
 Route::post('/orders/checkout', [OrderController::class, 'checkout']);
+
 Route::put('/customers', [CustomerController::class, 'create']);
 Route::post('/customers', [CustomerController::class, 'update']);
 Route::get('/customers/{var1}', [CustomerController::class, 'get']);

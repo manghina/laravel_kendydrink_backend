@@ -9,5 +9,21 @@ class Order extends Model
 {
     use HasFactory;
     protected $table = 'orders';
-    public $timestamps = false;
+    public $timestamps = true;
+   /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+
+    protected $fillable = [
+        'order_id',
+        'user_id',
+        'cart_id',
+        'product_id',
+        'card_id',
+        'qty_id',
+        'price_unit',
+        'subtotal_row',
+    ];
 }
