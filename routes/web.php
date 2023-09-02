@@ -25,7 +25,7 @@ Route::get('/', function () {
 Route::group(['middleware' => 'web'], function () {
     Route::post('test', [RegisterController::class, 'getCurrentUser']);
     Route::post('register', [RegisterController::class, 'register']);
-    Route::get('login', [RegisterController::class, 'login'])                
+    Route::any('login', [RegisterController::class, 'login'])                
     ->middleware('guest')
     ->name('login');
     Route::get('/products/all', [ProductController::class, 'all']);
