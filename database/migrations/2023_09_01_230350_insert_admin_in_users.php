@@ -11,9 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->decimal('percentage')->default(0);
-        });
+        
+        DB::table('users')->insert(
+            array(
+                'name' => 'Admin',
+                'email' => 'info@kendydrink.com',
+                'password' => 'kendydrink',
+                'role' => 'ADMIN'
+            )
+        );
+        
     }
 
     /**

@@ -19,6 +19,11 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+            $table->string('role')->default('CUSTOMER');
+            $table->string('coupon')->nullable();            
+            $table->decimal('percentage')->default(0);
+            $table->string('stripe_id')->nullable();
+            $table->string('card_id')->nullable();
         });
     }
 

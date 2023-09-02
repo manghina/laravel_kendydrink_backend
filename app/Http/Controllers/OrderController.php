@@ -73,7 +73,7 @@ class OrderController extends Controller
 
     }
     public function test() {
-        return $this->create(10, 'card_1NlVwN2eZvKYlo2Czx1c9iGM', $products);
+        // return $this->create(10, 'card_1NlVwN2eZvKYlo2Czx1c9iGM', $products);
     }
 
     public function getOrderNumber() {
