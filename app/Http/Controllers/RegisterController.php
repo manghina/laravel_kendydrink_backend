@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
    
 use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController as BaseController;
+use App\Http\Controllers\CustomerController;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Validator;
@@ -24,22 +25,21 @@ class RegisterController extends BaseController
             'password' => 'required',
             'c_password' => 'required|same:password',
         ]);
-   
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());       
         }
-        
+
         $input = $request->all();
-        $user = User::where('email', $input['email'])->get();
-        if(count($user) > 0)
-            return $this->sendError('Email '.$input['email'].' exist', "");       
+        $user = User::where('email', $request->email)->get();
+        if(count($user) > 0 )
+            return response()->json(['success' => 'false', 'msg' => 'User with email ' . $request->email . ' exist'], 200);
+       
         $input['password'] = bcrypt($input['password']);
         $user = User::create($input);
         //$success['token'] =  $user->createToken('MyApp')->plainTextToken;
-        $success['name'] =  $user->name;
-        $success['email'] =  $user->email;
-   
-        return $this->sendResponse($success, 'User register successfully.');
+        Auth::login($user);
+        $user = CustomerController::create();
+        return $user;
     }
    
     /**
@@ -65,5 +65,14 @@ class RegisterController extends BaseController
     public static function getCurrentUser() {
         $user = Auth::user();
         return $user;
+    }
+
+    public static function test() {
+        $stripe = new \Stripe\StripeClient('sk_test_4eC39HqLyjWDarjtT1zdp7dc');
+        
+        $stripe->customers->createSource(
+          'cus_9s6XKzkNRiz8i3',
+          ['source' => 'tok_mastercard']
+        );
     }
 }

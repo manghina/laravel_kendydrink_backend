@@ -5,30 +5,17 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use App\Models\User;
-/*
-    POST 
-    /v1/customers
-    GET 
-    /v1/customers/:id
-    POST 
-    /v1/customers/:id
-    DELETE 
-    /v1/customers/:id
-    GET 
-    /v1/customers
-    GET 
-    /v1/customers/search
-*/
+use Illuminate\Support\Facades\Auth;
+
 class CustomerController extends Controller
 {
     
-    public function create(Request $request) {
-        $body = json_decode($request->getContent(), true);
-        $name = $body['name'];
-        $email = $body['email'];
-        $user = User::where('email', $email)->get();
-        if(count($user))
-            return $user;
+    public static function create() {
+
+        $user = Auth::user();
+        $name = $user->name;
+        $email = $user->email;
+
         $stripe = new \Stripe\StripeClient('sk_test_4eC39HqLyjWDarjtT1zdp7dc');
         
         $stripeCustomer = $stripe->customers->create([
@@ -44,20 +31,9 @@ class CustomerController extends Controller
             'stripe_id' => $stripeId
         ];
 
-        if(isset($body['role'])) {
-            $data[]= $body['role'];
-        }
-
-        if(isset($body['coupon'])) {
-            $data[]= $body['coupon'];
-        }
-
-        $user = User::create($data);
-        
-        return User::where('email', $email)->get();
-
-
-
+        $user->stripe_id = $stripeId;
+        $user->save();
+        return $user;
     }
 
     public function get($id) {

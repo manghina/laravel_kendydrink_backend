@@ -26,6 +26,10 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
+        $user = User::where('email', $request->email)->get();
+        if(!empty($user))
+            return response()->json(['success' => 'false', 'msg' => 'User with email ' . $request->email . ' exist'], 200);
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,

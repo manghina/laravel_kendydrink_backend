@@ -19,9 +19,11 @@ return new class extends Migration
             $table->string('short_description', "200");
             $table->integer('category_id');
             $table->integer('sales');
+            $table->string('last_modified');
             $table->string('stripe_id', "200");
             $table->string('card_id', "200");
         });
+
     }
 
     /**

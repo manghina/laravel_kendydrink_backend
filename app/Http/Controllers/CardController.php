@@ -9,14 +9,13 @@ use Illuminate\Support\Facades\Auth;
 
 class CardController extends BaseController
 {
-
+    
     public function __construct() {
         $this->middleware('auth');
     }
 
     public function create(Request $request) {
-        // $body = json_decode($request->getContent());
-        $body = (Object)$request->all();
+        $body = json_decode($request->getContent());
         
         $validator = Validator::make($request->all(), [
             'num' => 'required',
@@ -28,23 +27,56 @@ class CardController extends BaseController
             return $this->sendError('Validation Error.', $validator->errors());       
         }
         
-        $cardNumber = $body->num;
-        $elapseDate = $body->elapse;
-        $cvc = $body->cvc;
+        $cardNumber = $request->num;
+        $elapseDate = $request->elapse;
+        $cvc = $request->cvc;
 
-
-
-        //$user = ['none'];
-        //$email = $user->email;
+        $user = Auth::user();
+        $email = $user->email;
+        $token = bcrypt(uniqid());
         $stripe = new \Stripe\StripeClient("sk_test_4eC39HqLyjWDarjtT1zdp7dc");
         $data = [
             "type" => "ach_credit_transfer",
             "currency" => "usd",
             "owner" => [
-                "email" =>  'email'
-            ]
-            ];
-        return $data;
-        //$stripe->sources->create($data);
+                "email" =>  $email
+            ],
+            "token" => $token
+        ];
+        $source = $stripe->sources->create($data);
+        $card_id = $this->createCard();
+        $user->card_id = $card_id;
+        $user->save();
+        return response()->json(['success' => 'success'], 200);
     }
+
+    public static function createCard() {
+        $stripe = new \Stripe\StripeClient('sk_test_4eC39HqLyjWDarjtT1zdp7dc');
+        $user = RegisterController::getCurrentUser();
+        $card = $stripe->customers->createSource(
+            $user->stripe_id,
+          ['source' => 'tok_mastercard']
+        );
+        return $card->id;
+    }
+    /*
+    public function test() {
+        $stripe = new \Stripe\StripeClient('sk_test_4eC39HqLyjWDarjtT1zdp7dc');
+        return $stripe->customers->retrieveSource(
+            'cus_OZO5SUuJqOM4IK',
+            'card_1NmG0s2eZvKYlo2CrNODQOKZ',
+            []
+        );
+    }
+    */
+    public function test() {
+        $stripe = new \Stripe\StripeClient('sk_test_4eC39HqLyjWDarjtT1zdp7dc');
+        return $stripe->charges->create([
+          'amount' => 2000,
+          'currency' => 'usd',
+          'source' => 'tok_visa',
+          'description' => 'My First Test Charge',
+        ]);
+    }
+
 }

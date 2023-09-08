@@ -7,19 +7,15 @@ use App\Models\Product;
 use App\Models\Order;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
     public function checkout(Request $request) {
+        
         $stripe = new \Stripe\StripeClient('sk_test_51NGgNzGfXypnSGPSkdMqKlzm59UbUjgC7i0KsfIW0YmpuYjEly1EI0mm0KMO8biFQEbXEpVnKAg4fdet1NJxuUAR00kgBEPlPP');
-
         $cart = json_decode($request->getContent());
-        $paymentRequest = [
-            'success_url' => 'https://dropmail.me/it/',
-            'line_items' => [],
-            'mode' => 'payment',
-        ];
-        $amount = 0;
+
 
         if(!count($cart))
             return "Bad request: Cannot checkout an empty cart";
@@ -30,7 +26,11 @@ class OrderController extends Controller
             if(!isset($product->quantity))
                 return "Bad request: one or more cart items does not contain quantity field";
         }
-        $products = [];
+
+
+        $amount = 0;
+        $prices = [];
+        $checkout = [];
         foreach ($cart as $key => $product) {
             $item = [];
             $id =  $product->id;
@@ -51,39 +51,60 @@ class OrderController extends Controller
                 'product_id' => $id,
                 'price' => $row->price,
                 'quantity' => $product->quantity,
-                'subtotal' => $amount
+                'subtotal' => $amount,
+                'stripe_test_id' => $row->stripe_test_id
             ];
-        }
 
-        $amount *= 100;
-        /*
-            $stripe->charges->create([
-                'amount' => $amount,
-                'currency' => 'eur',
-                'source' => 'tok_amex',
-                'description' => 'Kendy Drink Order',
-            ]);
+            $payload =
+                [
+                    'currency' => 'eur',
+                    'product' => $row->stripe_test_id,
+                    'unit_amount' => $product->quantity,
+                ];
+                // $stripeProduct = $stripe->prices->create($payload);
+                $checkout []= [
+                    'price' => $row->stripe_test_id,
+                    'quantity' => $product->quantity,
+                ];    
+            }
 
-            $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
-            $stripe->checkout->sessions->create($paymentRequest);
-        */
+            // return $checkout;
 
-        // SESSION => USER_ID
-        $this->create(10, 'card_1NlVwN2eZvKYlo2Czx1c9iGM', $products);
 
-    }
-    public function test() {
-        // return $this->create(10, 'card_1NlVwN2eZvKYlo2Czx1c9iGM', $products);
+            
+            $response = [
+                'line_items' =>  $checkout,
+                'mode' => 'payment',
+                'success_url' => 'http://127.0.0.1:8000/success.html',
+                'cancel_url' => 'http://127.0.0.1:8000/cancel.html',
+            ];
+            //return $response;
+            \Stripe\Stripe::setApiKey("sk_test_51NGgNzGfXypnSGPSkdMqKlzm59UbUjgC7i0KsfIW0YmpuYjEly1EI0mm0KMO8biFQEbXEpVnKAg4fdet1NJxuUAR00kgBEPlPP");
+            $checkout_session = \Stripe\Checkout\Session::create($response);
+              
+              return $checkout_session->url;
+            
+            
+            
+            //return  $stripe->paymentLinks->create(['line_items' => $response]);                
+            $this->create(10, 'card_1NlVwN2eZvKYlo2Czx1c9iGM', $products);
+            return $response;
+
+    } 
+
+    public function test(Request $request) {
+        return Auth::user();
     }
 
     public function getOrderNumber() {
-        $orderId = DB::table('orders')
+        $order =  DB::table('orders')
         ->select('orders.order_id',DB::raw('ifnull(sum(orders.order_id), 0)'))
         ->groupBy('orders.order_id')
         ->get();
-        if(!count($orderId)) {
+        if(!count($order)) {
             $orderId = 1;
         } else {
+            $orderId = $order[0]->order_id;
             $orderId += 1;
         }
         return $orderId;
