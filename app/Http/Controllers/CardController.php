@@ -59,24 +59,8 @@ class CardController extends BaseController
         );
         return $card->id;
     }
-    /*
     public function test() {
-        $stripe = new \Stripe\StripeClient('sk_test_4eC39HqLyjWDarjtT1zdp7dc');
-        return $stripe->customers->retrieveSource(
-            'cus_OZO5SUuJqOM4IK',
-            'card_1NmG0s2eZvKYlo2CrNODQOKZ',
-            []
-        );
-    }
-    */
-    public function test() {
-        $stripe = new \Stripe\StripeClient('sk_test_4eC39HqLyjWDarjtT1zdp7dc');
-        return $stripe->charges->create([
-          'amount' => 2000,
-          'currency' => 'usd',
-          'source' => 'tok_visa',
-          'description' => 'My First Test Charge',
-        ]);
+
     }
 
 }
