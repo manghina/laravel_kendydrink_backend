@@ -25,21 +25,16 @@ Route::get('/', function () {
 
 
 
+Route::post('login', [RegisterController::class, 'login']);
+Route::post('register', [RegisterController::class, 'register']);
+
 Route::group(['middleware' => 'web'], function () {
     
-    Route::post('login', [AuthenticatedSessionController::class, 'store'])
-    ->middleware('guest');
-    
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
-    ->middleware('auth')
-    ->name('logout');
+    ->middleware('auth');
     
     Route::post('logged', [RegisterController::class, 'getCurrentUser'])
     ->middleware('auth');
-
-    Route::post('register', [RegisterController::class, 'register'])
-    ->middleware('guest')
-    ->name('register');
 
     Route::get('products/all', [ProductController::class, 'all']);
     Route::get('product/category/{id}', [ProductController::class, 'findByCategory']);

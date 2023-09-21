@@ -14,16 +14,15 @@ class OrderController extends Controller
     public function checkout(Request $request) {
         
         $stripe = new \Stripe\StripeClient('sk_test_51NGgNzGfXypnSGPSkdMqKlzm59UbUjgC7i0KsfIW0YmpuYjEly1EI0mm0KMO8biFQEbXEpVnKAg4fdet1NJxuUAR00kgBEPlPP');
-        $cart = json_decode($request->getContent());
-
-
+        $cart = $request->all();
+        file_put_contents("asdsadsada", print_r($cart, true));
         if(!count($cart))
             return "Bad request: Cannot checkout an empty cart";
         foreach ($cart as $key => $product) {
-            if(!isset($product->id))
+            if(!isset($product['id']))
                 return "Bad request: one or more cart items does not contain id field";
 
-            if(!isset($product->quantity))
+            if(!isset($product['quantity']))
                 return "Bad request: one or more cart items does not contain quantity field";
         }
 
@@ -31,9 +30,9 @@ class OrderController extends Controller
         $amount = 0;
         $prices = [];
         $checkout = [];
-        foreach ($cart as $key => $product) {
+        foreach ($cart as $product) {
             $item = [];
-            $id =  $product->id;
+            $id =  $product['id'];
             $row = Product::where('id', $id)->get();
             if(count($row) == 0) {
                 return Response::json([
@@ -43,14 +42,14 @@ class OrderController extends Controller
             }
             $row = $row[0];
             $item['price'] = $row->price;
-            $item['quantity'] = $product->quantity;
+            $item['quantity'] = $product['quantity'];
             $paymentRequest['line_items'] []= $item;
-            $amount += ($row->price * $product->quantity);
+            $amount += ($row->price * $product['quantity']);
 
             $products[]= [
                 'product_id' => $id,
                 'price' => $row->price,
-                'quantity' => $product->quantity,
+                'quantity' => $product['quantity'],
                 'subtotal' => $amount,
                 'stripe_test_id' => $row->stripe_test_id
             ];
@@ -59,12 +58,12 @@ class OrderController extends Controller
                 [
                     'currency' => 'eur',
                     'product' => $row->stripe_test_id,
-                    'unit_amount' => $product->quantity,
+                    'unit_amount' => $product['quantity'],
                 ];
                 // $stripeProduct = $stripe->prices->create($payload);
                 $checkout []= [
                     'price' => $row->stripe_test_id,
-                    'quantity' => $product->quantity,
+                    'quantity' => $product['quantity'],
                 ];    
             }
 
