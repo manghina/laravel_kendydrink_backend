@@ -18,6 +18,7 @@ class OrderController extends Controller
         file_put_contents("asdsadsada", print_r($cart, true));
         if(!count($cart))
             return "Bad request: Cannot checkout an empty cart";
+        $cart= $request->get('cart');
         foreach ($cart as $key => $product) {
             if(!isset($product['id']))
                 return "Bad request: one or more cart items does not contain id field";
@@ -81,7 +82,7 @@ class OrderController extends Controller
             \Stripe\Stripe::setApiKey("sk_test_51NGgNzGfXypnSGPSkdMqKlzm59UbUjgC7i0KsfIW0YmpuYjEly1EI0mm0KMO8biFQEbXEpVnKAg4fdet1NJxuUAR00kgBEPlPP");
             $checkout_session = \Stripe\Checkout\Session::create($response);
               
-              return $checkout_session->url;
+              return json_encode(['url' => $checkout_session->url]);
             
             
             

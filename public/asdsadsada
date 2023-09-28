@@ -1,9 +1,38 @@
 Array
 (
-    [0] => Array
+    [cart] => Array
         (
-            [id] => 1
-            [quantity] => 2
+            [0] => Array
+                (
+                    [id] => 1
+                    [name] => Kendy Fragola
+                    [price] => 17.60
+                    [description] => Scopri l'aromatizzatore d'acqua senza zucchero "Kendy" e preparati a essere trasportato in un mondo di sapore straordinario! Con zero calorie e un gusto irresistibile di fragola, "Kendy" è l'arma
+                    [short_description] => "Kendy" è l'aromatizzatore d'acqua senza zucchero che cambierà il tuo modo di idratarti. Con il suo gusto alla fragola irresistibile e zero calorie, trasforma ogni sorso in un'esperienza gustativa str
+                    [category_id] => 1
+                    [sales] => 0
+                    [last_modified] => 1688911598
+                    [stripe_live_id] => 
+                    [stripe_test_id] => price_1No5VIGfXypnSGPSSPDhkNvI
+                    [quantity] => 1
+                )
+
+        )
+
+    [billing] => Array
+        (
+            [0] => Array
+                (
+                    [name] => 1
+                    [surname] => 1
+                    [email] => e@e.it
+                    [phoneNumber] => 1
+                    [city] => 1
+                    [country] => 1
+                    [shippingAddress] => 1
+                    [zipCode] => 1
+                )
+
         )
 
 )

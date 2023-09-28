@@ -6,6 +6,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\BillingController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 /*
@@ -35,6 +36,10 @@ Route::group(['middleware' => 'web'], function () {
     
     Route::post('logged', [RegisterController::class, 'getCurrentUser'])
     ->middleware('auth');
+    
+    Route::get('billing', [BillingController::class, 'all'])->middleware('auth');
+    Route::get('billing/{id}', [BillingController::class, 'get'])->middleware('auth');
+    Route::post('billing', [BillingController::class, 'create'])->middleware('auth');
 
     Route::get('products/all', [ProductController::class, 'all']);
     Route::get('product/category/{id}', [ProductController::class, 'findByCategory']);
