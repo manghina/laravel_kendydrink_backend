@@ -75,8 +75,8 @@ class OrderController extends Controller
             $response = [
                 'line_items' =>  $checkout,
                 'mode' => 'payment',
-                'success_url' => 'http://127.0.0.1:8000/success.html',
-                'cancel_url' => 'http://127.0.0.1:8000/cancel.html',
+                'success_url' => 'https://kendydrink.com/complete',
+                'cancel_url' => 'https://kendydrink.com/cancel.html',
             ];
             //return $response;
             \Stripe\Stripe::setApiKey("sk_test_51NGgNzGfXypnSGPSkdMqKlzm59UbUjgC7i0KsfIW0YmpuYjEly1EI0mm0KMO8biFQEbXEpVnKAg4fdet1NJxuUAR00kgBEPlPP");

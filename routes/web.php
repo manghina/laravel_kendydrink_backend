@@ -7,8 +7,8 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\BillingController;
+use App\Http\Controllers\MailController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -47,10 +47,6 @@ Route::group(['middleware' => 'web'], function () {
     Route::get('product/{id}', [ProductController::class, 'findById']);
     Route::get('product/{id}/img/{resolution}', [ProductController::class, 'findImgById']);
     Route::get('product/{id}/img', [ProductController::class, 'findImgById']);
-    
-    // non esposta
-    //Route::post('/orders/create', [OrderController::class, 'test']);
-    //Route::post('test', [RegisterController::class, 'test']);
     Route::post('test', [CardController::class, 'test']);
 
     Route::post('checkout', [OrderController::class, 'checkout'])
@@ -64,3 +60,4 @@ Route::group(['middleware' => 'web'], function () {
     Route::post('card', [CardController::class, 'create'])
     ->middleware('auth');
 });
+Route::get('send-mail', [MailController::class, 'index']);
