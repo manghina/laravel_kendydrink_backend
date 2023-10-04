@@ -11,6 +11,8 @@ use Validator;
 use Illuminate\Http\JsonResponse;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use App\Mail\LaravelTenTestMail;
+use Illuminate\Support\Facades\Mail;
 
 class RegisterController extends BaseController
 {
@@ -38,9 +40,9 @@ class RegisterController extends BaseController
        
         $input['password'] = bcrypt($input['password']);
         $user = User::create($input);
-        //$success['token'] =  $user->createToken('MyApp')->plainTextToken;
         Auth::login($user);
         $user = CustomerController::create();
+        $this->registerEmail($email);
         return $user;
     }
    
@@ -75,6 +77,38 @@ class RegisterController extends BaseController
         else{ 
             return $this->sendError('Unauthorised.', ['error'=>'Unauthorised']);
         } 
+    }
+    public function otp(Request $request): JsonResponse {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email'
+        ]);
+
+        $email = $request->get('email');
+        $data = [
+            'data' => $this->getOtp(),
+            'subject' => 'Autenticazione con OTP',
+            'view' => 'otp'
+        ];
+        Mail::to($email)->send(
+            new LaravelTenTestMail($data)
+        );
+        return $this->sendResponse(200, 'OTP send successfully.');
+    }
+
+    public function registerEmail($email): JsonResponse {
+        $data = [
+            'data' => 'https://kendydrink.com/shop?subscribe=1',
+            'subject' => 'Registrazione',
+            'view' => 'register'
+        ];
+        Mail::to($email)->send(
+            new LaravelTenTestMail($data)
+        );
+        return $this->sendResponse(200, 'OTP send successfully.');
+    }
+
+    private function getOtp() {
+        return $pass= rand(100000, 999999);
     }
 
     public static function getCurrentUser() {

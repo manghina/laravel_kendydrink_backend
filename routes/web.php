@@ -9,6 +9,8 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\MailController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -27,7 +29,11 @@ Route::get('/', function () {
 
 
 Route::post('login', [RegisterController::class, 'login']);
+Route::post('otp', [RegisterController::class, 'otp']);
 Route::post('register', [RegisterController::class, 'register']);
+//Route::post('registerEmail', [RegisterController::class, 'registerEmail']);
+Route::post('checkoutEmail', [OrderController::class, 'checkoutEmail']);
+Route::post('statusChange', [OrderController::class, 'statusChange']);
 
 Route::group(['middleware' => 'web'], function () {
     
@@ -60,4 +66,7 @@ Route::group(['middleware' => 'web'], function () {
     Route::post('card', [CardController::class, 'create'])
     ->middleware('auth');
 });
-Route::get('send-mail', [MailController::class, 'index']);
+Route::post('laravel_ten_test_mail', function () {
+    $data = "We are learning Laravel 10 mail from laravelia.com";
+
+});

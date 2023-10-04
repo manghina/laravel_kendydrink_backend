@@ -8,14 +8,42 @@ use App\Models\Order;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\LaravelTenTestMail;
 
 class OrderController extends Controller
 {
+
+
+//    public function statusChange($email) {
+    public function statusChange(Request $request) {
+        $email = $request->get('email');
+        $data = [
+            'data' => '#274635',
+            'subject' => 'Aggiornamento della consegna',
+            'view' => 'statusChange'
+        ];
+        Mail::to($email)->send(
+            new LaravelTenTestMail($data)
+        );
+    }
+
+    public function checkoutEmail($email, $cart) {
+//    public function checkoutEmail(Request $request) {
+        $email = $request->get('email');
+        $data = [
+            'data' => '#274635',
+            'subject' => 'Nuovo ordine',
+            'view' => 'checkout'
+        ];
+        Mail::to($email)->send(
+            new LaravelTenTestMail($data)
+        );
+    }
     public function checkout(Request $request) {
         
         $stripe = new \Stripe\StripeClient('sk_test_51NGgNzGfXypnSGPSkdMqKlzm59UbUjgC7i0KsfIW0YmpuYjEly1EI0mm0KMO8biFQEbXEpVnKAg4fdet1NJxuUAR00kgBEPlPP');
         $cart = $request->all();
-        file_put_contents("asdsadsada", print_r($cart, true));
         if(!count($cart))
             return "Bad request: Cannot checkout an empty cart";
         $cart= $request->get('cart');
@@ -67,10 +95,6 @@ class OrderController extends Controller
                     'quantity' => $product['quantity'],
                 ];    
             }
-
-            // return $checkout;
-
-
             
             $response = [
                 'line_items' =>  $checkout,
@@ -81,7 +105,7 @@ class OrderController extends Controller
             //return $response;
             \Stripe\Stripe::setApiKey("sk_test_51NGgNzGfXypnSGPSkdMqKlzm59UbUjgC7i0KsfIW0YmpuYjEly1EI0mm0KMO8biFQEbXEpVnKAg4fdet1NJxuUAR00kgBEPlPP");
             $checkout_session = \Stripe\Checkout\Session::create($response);
-              
+            $this->checkoutEmail(Auth::user()->email, $products);
               return json_encode(['url' => $checkout_session->url]);
             
             
