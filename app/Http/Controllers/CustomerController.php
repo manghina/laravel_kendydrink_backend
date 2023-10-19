@@ -91,11 +91,11 @@ class CustomerController extends Controller
         // id: 0->all users, 1: customers, 2: influencer
         $userlist = [];
         if ($id == 0) {
-            $userlist = User::get();
+            $userlist = User::orderBy('id', 'ASC')->get();
         }else if($id == 1) {
-            $userlist = User::where('role', 'CUSTOMER')->get();
+            $userlist = User::where('role', 'CUSTOMER')->orderBy('id', 'ASC')->get();
         }else {
-            $userlist = User::where('role', 'INFLUENCER')->get();
+            $userlist = User::where('role', 'INFLUENCER')->orderBy('id', 'ASC')->get();
         }
 
         return $userlist;
@@ -114,8 +114,19 @@ class CustomerController extends Controller
         $influencer_customer->referral = $request['Rinvio'];
         $influencer_customer->role = 'INFLUENCER';
         $influencer_customer->save();
-        $userlist = User::where('role', 'INFLUENCER')->get();
 
-        return $userlist;
+        return $this->sendResponse(200, 'successfully.');
+    }
+
+    public function sendResponse($result, $message)
+    {
+    	$response = [
+            'success' => true,
+            'data'    => $result,
+            'message' => $message,
+        ];
+
+
+        return response()->json($response, 200);
     }
 }
