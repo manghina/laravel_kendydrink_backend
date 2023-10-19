@@ -104,14 +104,15 @@ class CustomerController extends Controller
     public function createInfluenerUser(Request $request)
     {
         $influencer_customer = new User();
-        $influencer_customer->name = $request['name'];
-        $influencer_customer->surname = $request['surname'];
-        $influencer_customer->email = $request['email'];
-        $influencer_customer->phone_number = $request['phone_number'];
-        $influencer_customer->password = $request['password'];
-        $influencer_customer->percentage = $request['discount'];
+        $influencer_customer->name = $request['Nome'];
+        $influencer_customer->surname = $request['Cognome'];
+        $influencer_customer->email = $request['Email'];
+        $influencer_customer->phone_number = $request['Numero_di_telefono'];
+        $influencer_customer->password = $request['Parola_dordine'];
+        $influencer_customer->coupon = $request['Codice_coupon'];
+        $influencer_customer->percentage = $request['Di_sconto'];
+        $influencer_customer->referral = $request['Rinvio'];
         $influencer_customer->role = 'INFLUENCER';
-        $influencer_customer->referral = $request['referral'];
         $influencer_customer->save();
         $userlist = User::where('role', 'INFLUENCER')->get();
 
