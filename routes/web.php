@@ -35,6 +35,9 @@ Route::post('register', [RegisterController::class, 'register']);
 Route::post('checkoutEmail', [OrderController::class, 'checkoutEmail']);
 Route::post('statusChange', [OrderController::class, 'statusChange']);
 
+Route::post('getclientlist/{id}', [CustomerController::class, 'getclientlist']);        // getclientlist
+Route::post('createInfluenerUser', [CustomerController::class, 'createInfluenerUser']); // create influencer user
+
 Route::group(['middleware' => 'web'], function () {
     
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
@@ -62,6 +65,7 @@ Route::group(['middleware' => 'web'], function () {
     Route::post('customers', [CustomerController::class, 'update']); // da togliere
     Route::get('customers/{var1}', [CustomerController::class, 'get']); // da togliere
     Route::delete('customers/{var1}', [CustomerController::class, 'delete']); // da togliere
+ 
 
     Route::post('card', [CardController::class, 'create'])
     ->middleware('auth');
